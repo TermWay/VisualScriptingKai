@@ -1,12 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using Unity.VisualScripting;
-using UnityEditor;
+using UnityEngine;
 
 namespace CHM.VisualScriptingKai.Editor
 {
-    
+
     /// <summary>
     /// Data structure that can be used to locate a node's location.
     /// </summary>
@@ -22,9 +19,11 @@ namespace CHM.VisualScriptingKai.Editor
         => this.DefaultCompareTo(other);
         public readonly string GetInfo()
         {
-            return $"<b><size=14>{unit.Name()}</size></b>"
+            return $"<b><size=14>{unit.Name()}</size></b>" 
+            + $"\n<b>Default values:</b> {unit.defaultValues.ToCommaSeparatedString()}"
             + $"\n{Source.Info}";
         }
+
         public readonly Texture2D GetIcon(int resolution)
         {
             // Cursed operator overload. Gets texture with resolution.

@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -11,18 +8,18 @@ namespace CHM.VisualScriptingKai.Editor
     {
         private Toggle debugEnabled;
         private QueryResultsListView queryResultsListView;
+
         [MenuItem("Window/Visual Scripting/Graph Debugger")]
-        public static void OpenWindow()
+        public static void ShowWindow()
         {
-            GraphDebuggerWindow wnd = GetWindow<GraphDebuggerWindow>(
-                typeof(GraphQueryWindowBase));
-            // TODO: Add Graph Lens icon to GUIContent.
-            wnd.titleContent = new GUIContent("Graph Debugger");
+            GetWindow<GraphDebuggerWindow>("Graph Debugger");
         }
+
         private static class EditorPrefKeys
         {
             public static readonly string DebugEnabled = Application.dataPath + "/GraphDebugger/debug-enabled";
         }
+
         protected override void OnCreateGUI()
         {
             // Each editor window contains a root VisualElement object

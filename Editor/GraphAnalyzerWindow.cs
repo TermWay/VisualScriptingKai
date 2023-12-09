@@ -1,11 +1,10 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
-using UnityEngine.UIElements;
 using System.Linq;
-using static CHM.VisualScriptingKai.Editor.GraphUtility;
 using Unity.VisualScripting;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.UIElements;
+using static CHM.VisualScriptingKai.Editor.GraphUtility;
 
 namespace CHM.VisualScriptingKai.Editor
 {
@@ -27,13 +26,11 @@ namespace CHM.VisualScriptingKai.Editor
             public static readonly string QueryFolders = Application.dataPath + "/GraphAnalyzer/query-folders";
         }
         [MenuItem("Window/Visual Scripting/Graph Analyzer")]
-        public static void OpenWindow()
+        public static void ShowWindow()
         {
-            GraphAnalyzerWindow wnd = GetWindow<GraphAnalyzerWindow>(
-                typeof(GraphQueryWindowBase));
-            // TODO: Add Graph Lens icon to GUIContent.
-            wnd.titleContent = new GUIContent("Graph Analyzer");
+            GetWindow<GraphAnalyzerWindow>("Graph Analyzer");
         }
+
         protected override void OnCreateGUI()
         {
             // Each editor window contains a root VisualElement object
