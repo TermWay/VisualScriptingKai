@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEditor;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -17,6 +15,8 @@ namespace CHM.VisualScriptingKai.Editor
             private Label infoLabel;
             private VisualElement icon;
             private VisualElement container;
+
+            public string FilterPattern { get; set; }
             public QueryResultsEntry(VisualElement visualElement, VisualElement listContainer)
             {
                 infoLabel = visualElement.Q<Label>("info");
@@ -36,6 +36,11 @@ namespace CHM.VisualScriptingKai.Editor
             public void SetData(IGraphElementTrace nodeTrace)
             {
                 infoLabel.text = nodeTrace.GetInfo();
+                if (!string.IsNullOrWhiteSpace(FilterPattern))
+                {
+                    string coloredReplace = $"<color=#{ColorUtility.ToHtmlStringRGBA(Color.cyan)}><b>{FilterPattern}</b></color>";
+                    infoLabel.text = Regex.Replace(input: infoLabel.text, pattern: FilterPattern, replacement: coloredReplace, RegexOptions.IgnoreCase);
+                }
                 icon.style.backgroundImage = nodeTrace.GetIcon(60);
             }
         }
@@ -50,8 +55,11 @@ namespace CHM.VisualScriptingKai.Editor
                 queryResultEntry.userData = new QueryResultsEntry(queryResultEntry, listContainer);
                 return queryResultEntry;
             };
-            bindItem += (item, index) => {
-                (item.userData as QueryResultsEntry).SetData(queryResults[index]);
+            bindItem += (item, index) =>
+            {
+                QueryResultsEntry entry = item.userData as QueryResultsEntry;
+                entry.FilterPattern = FilterPattern;
+                entry.SetData(queryResults[index]);
             };
             onSelectionChange += items => {
                 int index = selectedIndex;
@@ -79,6 +87,7 @@ namespace CHM.VisualScriptingKai.Editor
             visible = queryResults.Count > 0;
             Rebuild();
         }
+        public string FilterPattern { get; set; }
         public void UpdateQueryResults(GraphSource source, IEnumerable<IGraphElementTrace> traces)
         {
             int removeIndexStart = queryResults.FindIndex(x => (Object)x.Source == (Object)source);

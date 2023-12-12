@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using Unity.VisualScripting;
 using UnityEditor;
+using UnityEngine;
 
 namespace CHM.VisualScriptingKai.Editor
 {
@@ -15,6 +13,15 @@ namespace CHM.VisualScriptingKai.Editor
         public Vector2 GraphPosition { get; }
         string GetInfo();
         Texture2D GetIcon(int resolution);
+
+
+        bool PassFilter(string filter)
+        {
+            if (string.IsNullOrWhiteSpace(filter))
+                return true;
+            return GetInfo().Contains(filter);
+        }
+
         /// <summary>
         /// Open the graph editor and make it jump to the graph element.
         /// </summary>
@@ -28,7 +35,7 @@ namespace CHM.VisualScriptingKai.Editor
             var sourceObject = (Object) Source;
             // TODO: This part of the code will destroy the graph reference.
             // Will probably need to restore the reference somehow afterwards.
-            // For now this is okay though, any potential scene here must be 
+            // For now this is okay though, any potential scene here must be
             // the currently-loaded scene.
             // // If the source is a GameObject, open its scene or prefab first.
             // if(source.TryGetGameObject(out var gameObject))
@@ -69,7 +76,7 @@ namespace CHM.VisualScriptingKai.Editor
         {
             // Sort descending.
             int compare = -@this.Score.CompareTo(other.Score);
-            if(compare != 0) 
+            if(compare != 0)
                 return compare;
             compare = -@this.Source.GetInstanceID().CompareTo(other.Source.GetInstanceID());
             if(compare != 0)

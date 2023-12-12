@@ -15,6 +15,7 @@ namespace CHM.VisualScriptingKai.Editor
         private DropdownField queryType;
         private TextField queryFolders;
         private TextField queryString;
+        private TextField queryFilter;
         private QueryResultsListView queryResultsListView;
         private readonly List<GraphSource> graphAssetSourceCache = new();
         private static class QueryType
@@ -57,6 +58,7 @@ namespace CHM.VisualScriptingKai.Editor
             FetchElement(visualTreeRoot, "query-type", out queryType);
             FetchElement(visualTreeRoot, "query-folders", out queryFolders);
             FetchElement(visualTreeRoot, "query-string", out queryString);
+            FetchElement(visualTreeRoot, "query-filter", out queryFilter);
             FetchElement(visualTreeRoot, "query-results", out queryResultsListView);
 
             queryFolders.value = EditorPrefs.GetString(EditorPrefKeys.QueryFolders, "Assets");
@@ -84,6 +86,14 @@ namespace CHM.VisualScriptingKai.Editor
                 ExecuteQuery();
             });
 
+            queryFilter.RegisterValueChangedCallback(changeEvent => {
+                // TrimStart because leading whitespaces make fuzzy search fail.
+                queryFilter.SetValueWithoutNotify(
+                    changeEvent.newValue.TrimStart());
+                queryResultsListView.FilterPattern = queryFilter.value;
+                ExecuteQuery();
+            });
+
             // First query.
             UpdateGraphAssetSourceCache();
             ExecuteQuery();
@@ -95,7 +105,7 @@ namespace CHM.VisualScriptingKai.Editor
         }
         protected override void OnPlayModeChanged(PlayModeStateChange stateChange)
         {
-            // Redo ExecuteQuery here because GraphReferences become invalid 
+            // Redo ExecuteQuery here because GraphReferences become invalid
             // when switching between modes.
             if(stateChange == PlayModeStateChange.EnteredEditMode
             || stateChange == PlayModeStateChange.EnteredPlayMode)
@@ -122,13 +132,14 @@ namespace CHM.VisualScriptingKai.Editor
             EditorPrefs.SetString(EditorPrefKeys.QueryString, queryString.value);
             var sources = graphAssetSourceCache.Concat(FindAllRuntimeGraphSources());
             var editedGraph = GetEditedGraph();
-            if(editedGraph != null) 
+            if(editedGraph != null)
                 sources.Append(editedGraph);
             if (queryType.value == QueryType.Nodes)
             {
                 queryResultsListView.LoadQueryResults(FindNodes(
                     sources,
-                    queryString.value));
+                    pattern: queryString.value,
+                    filter: queryFilter.value));
             }
             else if (queryType.value == QueryType.StickyNotes)
             {

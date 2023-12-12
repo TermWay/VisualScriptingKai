@@ -29,7 +29,7 @@ namespace CHM.VisualScriptingKai.Editor
                 bool hasSameReference = false;
                 foreach(var value in unit.defaultValues.Values)
                 {
-                    if(value is Object valueAsObject 
+                    if(value is Object valueAsObject
                     && valueAsObject
                     && valueAsObject == target)
                     {
@@ -106,16 +106,17 @@ namespace CHM.VisualScriptingKai.Editor
                 }
             }
         }
-        public static IEnumerable<IGraphElementTrace> FindNodes(IEnumerable<GraphSource> sources, string pattern, bool embedSubgraphsOnly = true)
+        public static IEnumerable<IGraphElementTrace> FindNodes(IEnumerable<GraphSource> sources, string pattern, string filter = null, bool embedSubgraphsOnly = true)
         {
             HashSet<Graph> visited = new();
             foreach(var source in sources)
-                foreach(var nodeTrace in FindNodes(source, pattern, embedSubgraphsOnly, visited))
-                    yield return nodeTrace;
+                foreach(IGraphElementTrace nodeTrace in FindNodes(source, pattern, embedSubgraphsOnly, visited))
+                    if(nodeTrace.PassFilter(filter))
+                        yield return nodeTrace;
         }
         public static IEnumerable<IGraphElementTrace> FindNodes(GraphSource source, string pattern, bool embedSubgraphsOnly = true, HashSet<Graph> visited = null)
         {
-            if(pattern.Length == 0) 
+            if(pattern.Length == 0)
                 yield break;
             foreach (var (unit, path) in source.GetUnitsRecursive(embedSubgraphsOnly, visited))
             {
@@ -144,7 +145,7 @@ namespace CHM.VisualScriptingKai.Editor
         }
         public static IEnumerable<IGraphElementTrace> FindStickyNotes(GraphSource source, string pattern, bool embedSubgraphsOnly = true, HashSet<Graph> visited = null)
         {
-            if(pattern.Length == 0) 
+            if(pattern.Length == 0)
                 yield break;
             foreach (var (stickyNote, path) in source.GetStickyNotesRecursive(embedSubgraphsOnly, visited))
             {
@@ -171,7 +172,7 @@ namespace CHM.VisualScriptingKai.Editor
         }
         public static IEnumerable<IGraphElementTrace> FindStates(GraphSource source, string pattern, bool embedSubgraphsOnly = true, HashSet<Graph> visited = null)
         {
-            if(pattern.Length == 0) 
+            if(pattern.Length == 0)
                 yield break;
             foreach (var (state, path) in source.GetStatesRecursive(embedSubgraphsOnly, visited))
             {
@@ -198,7 +199,7 @@ namespace CHM.VisualScriptingKai.Editor
         }
         public static IEnumerable<IGraphElementTrace> FindStateTransitions(GraphSource source, string pattern, bool embedSubgraphsOnly = true, HashSet<Graph> visited = null)
         {
-            if(pattern.Length == 0) 
+            if(pattern.Length == 0)
                 yield break;
             foreach (var (stateTransition, path) in source.GetStateTransitionsRecursive(embedSubgraphsOnly, visited))
             {
@@ -326,6 +327,6 @@ namespace CHM.VisualScriptingKai.Editor
             return FindAllGraphAssets(searchInFolders)
             .Concat(FindAllRuntimeGraphSources());
         }
-        
+
     }
 }
