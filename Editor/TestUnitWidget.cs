@@ -13,7 +13,7 @@ namespace CHM.VisualScriptingKai.Editor
         public TestUnitWidget(FlowCanvas canvas, TestUnit unit) : base(canvas, unit)
         {
         }
-        
+
         public override void DrawForeground()
         {
             base.DrawForeground();
@@ -36,9 +36,9 @@ namespace CHM.VisualScriptingKai.Editor
             if (unit.coroutine)
             {
                 Debug.LogWarning("Can't run coroutine tests in Edit Mode!");
-                return;
+               // return;
             }
-            unit.Trigger(reference, 0);
+            unit.TriggerButton(reference);
         }
 
         private void ClearExceptions()
