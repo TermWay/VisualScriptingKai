@@ -25,7 +25,7 @@ namespace CHM.VisualScriptingKai
             {
                 var flowToStop = flow.GetValue<Flow>(flowCoroutine);
                 // Prevents trying to stop finished/stopped coroutines.
-                if(flowToStop.isCoroutine)
+                if(flowToStop != null && flowToStop.isCoroutine)
                     flowToStop.StopCoroutine(false);
                 return exit;
             });
